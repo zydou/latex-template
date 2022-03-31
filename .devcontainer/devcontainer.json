@@ -1,0 +1,11 @@
+{
+    "name": "Texlive-2021",
+
+    // Other versions at https://hub.docker.com/r/texlive/texlive
+    "image": "texlive/texlive:latest",
+
+    // Default extensions
+    "extensions": [
+    "james-yu.latex-workshop"
+    ]
+}
