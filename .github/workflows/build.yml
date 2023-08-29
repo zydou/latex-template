@@ -9,6 +9,8 @@ on:
       - .vscode/**
       - .gitignore
       - README.md
+      - README-zh_CN.md
+      - LICENSE
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -47,6 +49,12 @@ jobs:
             ./*
             !.git
             !.github
+            !.devcontainer
+            !.vscode
+            !.gitingore
+            !README.md
+            !README-zh_CN.md
+            !LICENSE
 
       - name: Collect pdf files
         run: |
