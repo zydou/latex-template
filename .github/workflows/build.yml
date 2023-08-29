@@ -56,16 +56,15 @@ jobs:
             !README-zh_CN.md
             !LICENSE
 
-      - name: Collect pdf files
+      - name: Collect pdf files to build_pdfs
         run: |
-          mkdir public
-          find . -type f -name "*.pdf" -exec cp {} public \;
+          rsync -av --prune-empty-dirs --include '*/' --include '*.pdf' --exclude '*' . ./build_pdfs/
 
       - name: Push pdf files to texlive-${{matrix.texlive}} branch
         if: github.event_name != 'pull_request' && github.ref_name == github.event.repository.default_branch
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: texlive-${{matrix.texlive}}
-          folder: ./public
+          folder: ./build_pdfs
           single-commit: true
           commit-message: ${{ github.event.head_commit.message }}
