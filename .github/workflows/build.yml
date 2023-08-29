@@ -1,0 +1,63 @@
+---
+name: Build LaTeX
+
+on:
+  workflow_dispatch:
+  push:
+    paths-ignore:
+      - .devcontainer/**
+      - .vscode/**
+      - .gitignore
+      - README.md
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build_latex:
+    strategy:
+      fail-fast: false
+      matrix:
+        texlive: [2018, 2019, 2020, 2021, 2022, 2023]
+    name: Build with texlive-${{matrix.texlive}}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@main
+      - name: Compile LaTeX document
+        uses: zydou/latex-action@v3
+        with:
+          texlive_version: ${{matrix.texlive}}
+          work_in_root_file_dir: true
+          continue_on_error: true
+          # latexmk_use_xelatex: true
+          # latexmk_use_lualatex: true
+          root_file: |
+            **/*.tex
+
+      - name: Upload build assets to artifacts
+        uses: actions/upload-artifact@main
+        with:
+          name: texlive-${{matrix.texlive}}
+          path: |
+            ./*
+            !.git
+            !.github
+
+      - name: Collect pdf files
+        run: |
+          mkdir public
+          find . -type f -name "*.pdf" -exec cp {} public \;
+
+      - name: Push pdf files to texlive-${{matrix.texlive}} branch
+        if: github.event_name != 'pull_request' && github.ref_name == github.event.repository.default_branch
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: texlive-${{matrix.texlive}}
+          folder: ./public
+          single-commit: true
+          commit-message: ${{ github.event.head_commit.message }}

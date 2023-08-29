@@ -1,14 +1,22 @@
 {
-    "name": "Texlive-2021",
-
-    // Other versions at https://hub.docker.com/r/texlive/texlive
-    "image": "texlive/texlive:latest",
-
-    // Default extensions
-    "extensions": [
-    "james-yu.latex-workshop"
-    ],
-
-    // Default Docker CLI arguments
-    "runArgs": ["--name=LaTeX"]
+  "name": "latex",
+  "image": "zydou/devcontainer-texlive:2022",
+  "runArgs": ["--name=devcontainer-latex-template"],
+  "postCreateCommand": "bash .devcontainer/postCreateCommand.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": ["james-yu.latex-workshop", "JeffersonQin.latex-snippets-jeff"],
+      "terminal.integrated.defaultProfile.linux": "bash",
+      "terminal.integrated.profiles.linux": {
+        "bash": {
+          "icon": "terminal-bash",
+          "path": "/bin/bash"
+        }
+      }
+    },
+    "remoteEnv": {
+      "PDFVIEWER": "code"
+    },
+    "remoteUser": "latex"
+  }
 }
